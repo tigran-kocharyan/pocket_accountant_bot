@@ -1,7 +1,5 @@
 # Pocket Accountant
 
-[![VK](https://repository-images.githubusercontent.com/205442979/2f7b6300-cb6d-11e9-9896-0c085d6eb987)](https://vk.com/k_tigran)
-
-/github/stars/:user/:repo?style=social
+[![VK](https://joomline.org/images/_thumbs/ico/jlvkgroup-ico2.png)](https://vk.com/k_tigran)
 
 ## This bot helps you to keep your expenses updated!

@@ -2,7 +2,6 @@
 using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Types.ReplyMarkups;
 using BotLibrary;
 //using System.Net;
 //using System.Collections.Generic;
@@ -15,12 +14,6 @@ namespace TelegramBot
     public class Program
     {
         private static ITelegramBotClient botClient;
-        public static string replyMessage = "Введите Вашу покупку в виде " +
-            "{Предмет} {Стоимость в цифрах} {Валюта}" + Environment.NewLine +
-            $"Пример: _Резиновый шланг 100 рублей_" + Environment.NewLine +
-            "*ВАЖНО, ЧТОБЫ СТОИМОСТЬ И ВАЛЮТА ШЛИ В КОНЦЕ!*";
-
-        public static ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
 
         static void Main(string[] args)
         {
@@ -29,24 +22,11 @@ namespace TelegramBot
                 //var proxy = new HttpToSocks5Proxy("217.196.81.221", 43870);
                 botClient = new TelegramBotClient("788209639:AAEcBsecEd_CCzu2uOrYo80WdzSyN7lSsC0") { Timeout = TimeSpan.FromSeconds(10) };
 
-                markup.Keyboard =
-            new KeyboardButton[][]
-            {
-                new KeyboardButton[]
-                {
-                new KeyboardButton("Дубки"),
-                },
-
-                new KeyboardButton[]
-                {
-                new KeyboardButton("Одинцово")
-                }
-            };
-
                 Console.WriteLine($"[{DateTime.Now}]: Bot is running...");
                 Console.WriteLine("Current $USD rate is " + CurrencyParser.getCurrency());
 
                 botClient.OnMessage += Bot_OnMessage;
+                botClient.OnCallbackQuery += Bot_OnCallbackQuery;
 
                 botClient.StartReceiving();
                 Thread.Sleep(int.MaxValue);
@@ -87,11 +67,14 @@ namespace TelegramBot
                         CommandHandler.AddExpense(e, botClient);
                         break;
 
+                    case "/get_expense":
+                        CommandHandler.GetExpense(e, botClient);
+                        break;
+
                     default:
                         switch (e?.Message?.ReplyToMessage?.Text)
                         {
-                            case "Введите Вашу покупку в виде:\n" +
-            "{Предмет} {Цена} {Валюта}\n\n/help для помощи...":
+                            case CommandHandler.replyCheck:
                                 CommandHandler.FillExpense(e, botClient);
                                 break;
 
@@ -108,39 +91,104 @@ namespace TelegramBot
             }
         }
 
-        //if (text == null)
-        //{
-        //    return;
-        //}
-        //else if (text == "/start")
-        //{
-        //    CommandHandler.DoStart(e);
-        //}
-        //else if (text == "/commands")
-        //{
-        //    CommandHandler.ShowCommands(e);
-        //}
-        ////else if (text == "/getStick")
-        ////{
-        ////    SendSticker(e);
-        ////}
-        ////else if (text == "/getCurrency")
-        ////{
-        ////    SendCurrency(e);
-        ////}
+        private static async void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        {
+            var data = e.CallbackQuery.Data;
 
-        //else if (text == "/add_expense")
-        //{
-        //    CommandHandler.AddExpense(e);
-        //}
-        //else if (e?.Message?.ReplyToMessage?.Text == replyMessage)
-        //{
-        //    CommandHandler.FillExpense(e);
-        //}
+            try
+            {
+                switch (data)
+                {
+                    case null:
+                        break;
 
-        //else
-        //{
-        //    await botClient.SendTextMessageAsync(e.Message.Chat, "Что-то пошло не так 😞. Используйте комманды для общения с ботом.");
-        //}
+                    case "0":
+                        //string outputMessage0 = "Чтобы правильно ввести данные, " +
+                        //    "Вам необходимо соблюдать правила ✅\n" +
+                        //    "1. Вызов `/get_expenses` необходим для начала ввода.\n\n" +
+                        //    "2. Затем введите в ответном сообщении свою покупку в формате:\n" +
+                        //    "       `{Продукт} {Цена} {Валюта} {Тип}`\n" +
+                        //    "       По умолчанию:\n" +
+                        //    "       Валюта - _Рубль_ и Тип - _Разное_.\n\n" +
+                        //    "3. Пример ввода данных:\n" +
+                        //    "       _Книга Шилдта 1000 рублей_";
+
+                        string outputMessage0 = "Чтобы правильно ввести данные, " +
+                            "Вам необходимо соблюдать правила ✅\n\n" +
+                            "1. Вызов `/get_expenses` необходим для начала ввода.\n\n" +
+                            "2. Затем введите в ответном сообщении свою покупку в формате:\n" +
+                            "    `{Продукт} {Цена} {Валюта}`\n" +
+                            "       По умолчанию: Валюта - _Рубль_.\n\n" +
+                            "3. Пример ввода данных:\n" +
+                            "       _Книга Шилдта 1000 рублей_";
+
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Ввод данных 👩‍💻");
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.CallbackQuery.From.Id,
+                            text: outputMessage0,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        break;
+
+                    case "1":
+                        string username = "@Tigran_K";
+                        string outputMessage1 = "Большинство ошибок возникает из-за 👨🏾‍💻\n" +
+                            "1. Неправильный ввод команд.\n" +
+                            "       _В таком случае, `/commands` спасёт Вас.\n\n" +
+                            "2. Неправильный ввод данных для заполнения покупок.\n" +
+                            "       _Во избежание этих ошибок, воспользуйтесь кнопкой\"Ввод данных\" в помощнике,_ " +
+                            "_где уточняются все аспекты ввода._\n\n" +
+                            $"3. Так же, Вы можете написать сообщение автору `{username}`, чтобы решить проблему 🦸🏻‍♂️";
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Почему ошибка? 😡");
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.CallbackQuery.From.Id,
+                            text: outputMessage1,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        break;
+
+                    case "2":
+                        string outputMessage2 = "       В первую очередь, Бот поможет Вам не \"перетратить\" деньги," +
+                            "сообщив, что установленный Вам лимит стремится к нулю 😦\n\n" +
+                            "       Так же Карманный Бухгалтер поможет Вам всегда " +
+                            "быть в курсе всех Ваших покупок" +
+                            ",предоставив список за день/неделю/месяц 💁‍♂️\n\n" +
+                            "       Исходя из опроса, многим людям достаточно " +
+                            "сложно держать в голове все свои расходы." +
+                            "Поэтому, Карманный Бухгалтер предлагает переложить эту обязанность на него 🤖";
+
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Зачем мне Бот? 🤡");
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.CallbackQuery.From.Id,
+                            text: outputMessage2,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        break;
+
+                    case "3":
+                        string outputMessage3 = "       Карманный Бухгалтер 🤖 запоминает все введенные Ваши покупки и " +
+                            "_*сохраняет, анализирует и выводит*_ Вам их, спасая Вас от огромных списков 🙌";
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Как работает Бот 🤔");
+
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.CallbackQuery.From.Id,
+                            text: outputMessage3,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        break;
+
+                    default:
+                        Console.WriteLine("[Callback] Something Went Wrong!");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{new String('=', 30)}\nERROR: {ex.Message}");
+            }
+        }
     }
 }

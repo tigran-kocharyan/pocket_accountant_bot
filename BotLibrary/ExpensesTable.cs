@@ -43,7 +43,7 @@ namespace BotLibrary
             {
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var records = csv.GetRecords<PurchaseInfo>().ToList();
-                string expenses = $"Ваши расходы: {Environment.NewLine}";
+                string expenses = $"Ваши покупки: {Environment.NewLine}";
                 int temp = 1;
                 foreach (var item in records)
                 {

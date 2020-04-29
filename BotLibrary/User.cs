@@ -30,7 +30,7 @@ namespace BotLibrary
             ($"ID: {id}");
 
         private void AddUser(string username, long id) => File.AppendAllText(path,
-            $"[User] => Name: {username}, ID: {id}{newLine}");
+            $"[User] => ID: {id}{newLine} | {username}");
     }
 }
 

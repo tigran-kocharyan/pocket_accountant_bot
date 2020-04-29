@@ -3,11 +3,11 @@ using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using BotLibrary;
-//using System.Net;
+using System.Net;
 //using System.Collections.Generic;
 //using System.Text;
 //using System.Threading.Tasks;
-//using MihaZupan;
+using MihaZupan;
 
 namespace TelegramBot
 {
@@ -19,8 +19,10 @@ namespace TelegramBot
         {
             try
             {
-                //var proxy = new HttpToSocks5Proxy("217.196.81.221", 43870);
-                botClient = new TelegramBotClient("788209639:AAEcBsecEd_CCzu2uOrYo80WdzSyN7lSsC0") { Timeout = TimeSpan.FromSeconds(10) };
+                //var proxy = new HttpToSocks5Proxy("p.webshare.io", 1080, "kgeylycq-1", "cnhaxv69p8lf");
+                //proxy.ResolveHostnamesLocally = false;
+                botClient = new TelegramBotClient("788209639:AAEcBsecEd_CCzu2uOrYo80WdzSyN7lSsC0")
+                { Timeout = TimeSpan.FromSeconds(10) };
 
                 Console.WriteLine($"[{DateTime.Now}]: Bot is running...");
                 Console.WriteLine("Current $USD rate is " + CurrencyParser.getCurrency());
@@ -78,6 +80,14 @@ namespace TelegramBot
                                 CommandHandler.FillExpense(e, botClient);
                                 break;
 
+                            case "Успешно добавлено ✅\n\n" + CommandHandler.replyCheck:
+                                CommandHandler.FillExpense(e, botClient);
+                                break;
+
+                            case "Некорректные данные о покупке 🥴*\n\n" + CommandHandler.replyCheck:
+                                CommandHandler.FillExpense(e, botClient);
+                                break;
+
                             default:
                                 CommandHandler.ShowError(e, botClient);
                                 break;
@@ -113,71 +123,93 @@ namespace TelegramBot
                         //    "3. Пример ввода данных:\n" +
                         //    "       _Книга Шилдта 1000 рублей_";
 
-                        string outputMessage0 = "Чтобы правильно ввести данные, " +
+                        string outputMessage0 = "*Ввод данных 👩‍💻*\n\n" +
+                            "Чтобы правильно ввести данные, " +
                             "Вам необходимо соблюдать правила ✅\n\n" +
-                            "1. Вызов `/get_expenses` необходим для начала ввода.\n\n" +
+                            "1. Вызов /get\\_expenses необходим для начала ввода.\n\n" +
                             "2. Затем введите в ответном сообщении свою покупку в формате:\n" +
                             "    `{Продукт} {Цена} {Валюта}`\n" +
-                            "       По умолчанию: Валюта - _Рубль_.\n\n" +
+                            "    По умолчанию: Валюта - _Рубль_.\n\n" +
                             "3. Пример ввода данных:\n" +
                             "       _Книга Шилдта 1000 рублей_";
 
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Ввод данных 👩‍💻");
+                            (e.CallbackQuery.Id, "Помогаю 🗣");
 
-                        await botClient.SendTextMessageAsync(
+                        await botClient.EditMessageTextAsync(
                             chatId: e.CallbackQuery.From.Id,
                             text: outputMessage0,
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: CommandHandler.helpMarkup
+                            );
+                        await botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id);
                         break;
 
                     case "1":
-                        string username = "@Tigran_K";
-                        string outputMessage1 = "Большинство ошибок возникает из-за 👨🏾‍💻\n" +
+                        string outputMessage1 = "*Почему ошибка? 😡*\n\n" +
+                            "Большинство ошибок возникает из-за: 👨🏾‍💻\n\n" +
                             "1. Неправильный ввод команд.\n" +
-                            "       _В таком случае, `/commands` спасёт Вас.\n\n" +
+                            "       _В таком случае, /commands спасёт Вас._\n\n" +
                             "2. Неправильный ввод данных для заполнения покупок.\n" +
                             "       _Во избежание этих ошибок, воспользуйтесь кнопкой\"Ввод данных\" в помощнике,_ " +
                             "_где уточняются все аспекты ввода._\n\n" +
-                            $"3. Так же, Вы можете написать сообщение автору `{username}`, чтобы решить проблему 🦸🏻‍♂️";
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Почему ошибка? 😡");
+                            $"3. Так же, Вы можете написать сообщение автору t.me/Tigran\\_K, " +
+                            $"чтобы решить проблему 🦸🏻‍♂️";
 
-                        await botClient.SendTextMessageAsync(
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Помогаю 🗣");
+
+                        await botClient.EditMessageTextAsync(
                             chatId: e.CallbackQuery.From.Id,
                             text: outputMessage1,
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: CommandHandler.helpMarkup
+                            );
+                        await botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id);
                         break;
 
                     case "2":
-                        string outputMessage2 = "       В первую очередь, Бот поможет Вам не \"перетратить\" деньги," +
-                            "сообщив, что установленный Вам лимит стремится к нулю 😦\n\n" +
-                            "       Так же Карманный Бухгалтер поможет Вам всегда " +
-                            "быть в курсе всех Ваших покупок" +
-                            ",предоставив список за день/неделю/месяц 💁‍♂️\n\n" +
+                        string outputMessage2 = "*Зачем мне Бот? 🤡*\n\n" +
+                            "       В первую очередь, Бот поможет Вам не \"перетратить\" " +
+                            "деньги, сообщив, что установленный лимит стремится к нулю 😦\n\n" +
+                            "       Также Карманный Бухгалтер поможет всегда быть в курсе всех покупок, " +
+                            "предоставив список за день/неделю/месяц 💁‍♂️\n\n" +
                             "       Исходя из опроса, многим людям достаточно " +
-                            "сложно держать в голове все свои расходы." +
-                            "Поэтому, Карманный Бухгалтер предлагает переложить эту обязанность на него 🤖";
+                            "сложно держать в голове все свои расходы, поэтому *Карманный Бухгалтер* предлагает" +
+                            " переложить эту обязанность на него 🤖";
 
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Зачем мне Бот? 🤡");
+                            (e.CallbackQuery.Id, "Помогаю 🗣");
 
-                        await botClient.SendTextMessageAsync(
+                        await botClient.EditMessageTextAsync(
                             chatId: e.CallbackQuery.From.Id,
                             text: outputMessage2,
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: CommandHandler.helpMarkup
+                            );
+                        await botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id);
                         break;
 
                     case "3":
-                        string outputMessage3 = "       Карманный Бухгалтер 🤖 запоминает все введенные Ваши покупки и " +
-                            "_*сохраняет, анализирует и выводит*_ Вам их, спасая Вас от огромных списков 🙌";
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Как работает Бот 🤔");
+                        string outputMessage3 = "*Как работает Бот 🤔*\n\n" +
+                            "🤖 *Карманный Бухгалтер* " +
+                            "*запоминает* все введенные покупки, *сохраняет, анализирует* " +
+                            "*и выводит* их, спасая Вас от огромных списков 🙌";
 
-                        await botClient.SendTextMessageAsync(
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Помогаю 🗣");
+
+                        await botClient.EditMessageTextAsync(
                             chatId: e.CallbackQuery.From.Id,
                             text: outputMessage3,
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: CommandHandler.helpMarkup
+                            );
+                        await botClient.AnswerCallbackQueryAsync(e.CallbackQuery.Id);
                         break;
 
                     default:

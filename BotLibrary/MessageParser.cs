@@ -5,10 +5,11 @@ namespace BotLibrary
 {
     public class MessageParser
     {
-        public static bool CheckMessage(string[] text)
+        public static double price;
+        public static bool CheckMessage(string[] message)
         {
-            int length = text.Length;
-            return Regex.IsMatch(text[length - 1], "^рубл.*$");
+            return double.TryParse(message[message.Length - 2], out price)
+                    && Regex.IsMatch(message[message.Length - 1], "^рубл.*$");
         }
     }
 }

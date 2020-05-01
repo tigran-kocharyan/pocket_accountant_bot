@@ -14,7 +14,7 @@ namespace BotLibrary
             }
             set
             {
-                if (value == String.Empty)
+                if (value == null)
                 {
                     username = "NoName";
                 }
@@ -57,7 +57,7 @@ namespace BotLibrary
         private void AddUser(string username, long id) => File.AppendAllText(pathUsers,
             $"[User] => ID: {id}\n | {username}");
 
-        public static void AddJSON(User user)
+        public static void WriteJSON(User user)
         {
             using (JsonWriter fs = new JsonTextWriter
                 (new StreamWriter($"{pathPreferences}{user.Id}.json")))
@@ -74,6 +74,16 @@ namespace BotLibrary
                 JsonSerializer jsonSerializer = new JsonSerializer();
                 User user = jsonSerializer.Deserialize(fs, typeof(User)) as User;
                 return user;
+            }
+        }
+
+        public static void EditJSON(long id, string currency, User user)
+        {
+            using (JsonWriter fs = new JsonTextWriter(new StreamWriter($"{pathPreferences}{id}.json")))
+            {
+                user.PreferableCurrency = currency;
+                JsonSerializer jsonSerializer = new JsonSerializer();
+                jsonSerializer.Serialize(fs, user);
             }
         }
 

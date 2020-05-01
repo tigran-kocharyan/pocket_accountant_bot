@@ -77,10 +77,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotException.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="CurrencyParser.cs" />
     <Compile Include="ExpensesTable.cs" />
+    <Compile Include="Markups.cs" />
     <Compile Include="MessageParser.cs" />
     <Compile Include="Phrases.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

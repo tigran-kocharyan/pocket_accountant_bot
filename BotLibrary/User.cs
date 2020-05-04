@@ -55,7 +55,7 @@ namespace BotLibrary
         private bool isContains(long id) => File.ReadAllText(pathUsers).Contains
             ($"ID: {id}");
         private void AddUser(string username, long id) => File.AppendAllText(pathUsers,
-            $"[User] => ID: {id}\n | {username}");
+            $"[User] => ID: {id} | {username}");
 
         public static void WriteJSON(User user)
         {

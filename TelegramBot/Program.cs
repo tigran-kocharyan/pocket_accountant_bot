@@ -7,8 +7,8 @@ using System.IO;
 using static BotLibrary.Phrases;
 using static BotLibrary.Markups;
 //using System.Net;
-//using System.Collections.Generic;
-//using System.Text;
+using System.Collections.Generic;
+using System.Text;
 //using System.Threading.Tasks;
 //using MihaZupan;
 
@@ -87,11 +87,12 @@ namespace TelegramBot
                                 CommandHandler.FillExpense(e, botClient);
                                 break;
 
-                            case "Некорректные данные о покупке 🥴*\n\n" + replyCheck:
+                            case "Некорректные данные о покупке 🥴\n\n" + replyCheck:
                                 CommandHandler.FillExpense(e, botClient);
                                 break;
 
                             default:
+                                Console.WriteLine(1);
                                 CommandHandler.ShowError(e, botClient);
                                 break;
                         }
@@ -116,18 +117,8 @@ namespace TelegramBot
                         break;
 
                     case "0":
-                        //string outputMessage0 = "Чтобы правильно ввести данные, " +
-                        //    "Вам необходимо соблюдать правила ✅\n" +
-                        //    "1. Вызов `/get_expenses` необходим для начала ввода.\n\n" +
-                        //    "2. Затем введите в ответном сообщении свою покупку в формате:\n" +
-                        //    "       `{Продукт} {Цена} {Валюта} {Тип}`\n" +
-                        //    "       По умолчанию:\n" +
-                        //    "       Валюта - _Рубль_ и Тип - _Разное_.\n\n" +
-                        //    "3. Пример ввода данных:\n" +
-                        //    "       _Книга Шилдта 1000 рублей_";
-
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -139,7 +130,7 @@ namespace TelegramBot
 
                     case "1":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -151,7 +142,7 @@ namespace TelegramBot
 
                     case "2":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -163,7 +154,7 @@ namespace TelegramBot
 
                     case "3":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -175,7 +166,7 @@ namespace TelegramBot
 
                     case "menu":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Открываю Главное Меню 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -187,7 +178,7 @@ namespace TelegramBot
 
                     case "setting":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Выберите Валюту По-умолчанию 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -200,7 +191,7 @@ namespace TelegramBot
 
                     case "usd":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Новая Валюта: USD 🗣");
 
                         User.EditJSON(chatID, "USD", User.ReadJSON(chatID));
                         await botClient.EditMessageTextAsync(
@@ -214,7 +205,7 @@ namespace TelegramBot
 
                     case "rub":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Новая Валюта: РУБ 🗣");
 
                         User.EditJSON(chatID, "RUB", User.ReadJSON(chatID));
                         await botClient.EditMessageTextAsync(
@@ -228,7 +219,7 @@ namespace TelegramBot
 
                     case "sum":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Новая Валюта: СУМ 🗣");
 
                         User.EditJSON(chatID, "UZS", User.ReadJSON(chatID));
                         await botClient.EditMessageTextAsync(
@@ -242,7 +233,7 @@ namespace TelegramBot
 
                     case "help":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Выберите, что Вас интересует 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -252,24 +243,43 @@ namespace TelegramBot
                             replyMarkup: helpMarkup);
                         break;
 
-                    //case "input":
-                    //    await botClient.AnswerCallbackQueryAsync
-                    //        (e.CallbackQuery.Id, "Помогаю 🗣");
+                    case "input":
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id, "Выполните Ввод покупки 🗣");
 
-                    //    break;
+                        try
+                        {
+                            await botClient.SendTextMessageAsync(
+                                chatId: chatID,
+                                text: replyMessage,
+                                replyMarkup: force,
+                                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"{new String('=', 30)}\nERROR: {ex.Message}");
+                        }
+                        break;
 
                     case "output":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Вывожу Ваши покупки 🗣");
 
-                        if (File.Exists(@"../../../data/tables/" + 
-                            e.CallbackQuery.Message.Chat.Id + ".csv"))
+                        long id = e.CallbackQuery.Message.Chat.Id;
+
+                        if (File.Exists(@"../../../data/purchases/" + id + ".json"))
                         {
-                            string expenses = ExpensesTable.ReadCSV
-                                (e.CallbackQuery.Message.Chat.Id.ToString());
+                            List<PurchaseInfo> purchases = PurchaseInfo.ReadPurchase(chatID);
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (int i = 0; i < purchases.Count; i++)
+                            {
+                                stringBuilder.AppendLine($"{i + 1}. " + purchases[i].ToString());
+                            }
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
-                                text: expenses);
+                                text: $"*Ваши покупки вида:*\n_Название Цена Валюта Тип Дата_\n\n"
+                                + stringBuilder.ToString(),
+                                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                         }
                         else
                         {
@@ -282,7 +292,7 @@ namespace TelegramBot
 
                     case "commands":
                         await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Помогаю 🗣");
+                            (e.CallbackQuery.Id, "Руководство по командам 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -291,7 +301,7 @@ namespace TelegramBot
                             messageId: e.CallbackQuery.Message.MessageId,
                             replyMarkup: menuMarkup);
                         break;
-                        
+
                     default:
                         Console.WriteLine("[Callback] Something Went Wrong!");
                         break;

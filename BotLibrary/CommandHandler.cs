@@ -6,6 +6,8 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using static BotLibrary.Phrases;
 using static BotLibrary.Markups;
+using System.Collections.Generic;
+using System.Text;
 
 namespace BotLibrary
 {
@@ -76,12 +78,19 @@ namespace BotLibrary
         {
             try
             {
-                if (File.Exists(@"../../../data/tables/" + e.Message.Chat.Id + ".csv"))
+                if (File.Exists(@"../../../data/purchases/" + e.Message.Chat.Id + ".json"))
                 {
-                    string expenses = ExpensesTable.ReadCSV(e.Message.Chat.Id.ToString());
+                    List<PurchaseInfo> purchases = PurchaseInfo.ReadPurchase(e.Message.Chat.Id);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < purchases.Count; i++)
+                    {
+                        stringBuilder.AppendLine($"{i+1}. "+purchases[i].ToString());
+                    }
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
-                        text: expenses);
+                        text: $"*Ваши покупки вида:*\n_Название Цена Валюта Тип Дата_\n\n" 
+                        + stringBuilder.ToString(),
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
                 else
                 {
@@ -100,15 +109,13 @@ namespace BotLibrary
         {
             try
             {
-                string[] text = Regex.Replace(e.Message.Text, @"\s+", " ").Split(' ');
+                PurchaseInfo purchase = PurchaseInfo.PurchaseParsing
+                    (e.Message.Text, e.Message.Chat.Id);
+                //string[] text = Regex.Replace(e.Message.Text, @"\s+", " ").Split(' ');
 
-                if (MessageParser.CheckMessage(text))
+                if (purchase != null)
                 {
-                    ExpensesTable.WriteCSV(
-                        id: e.Message.Chat.Id.ToString(),
-                        obj: string.Join(" ", text.Take(text.Length - 2)),
-                        price: double.Parse(text[text.Length - 2]),
-                        currency: text[text.Length - 1]);
+                    PurchaseInfo.WritePurchase(e.Message.Chat.Id, purchase);
 
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
@@ -117,6 +124,11 @@ namespace BotLibrary
                         replyMarkup: force
                         );
                 }
+                //    ExpensesTable.WriteCSV(
+                //        id: e.Message.Chat.Id.ToString(),
+                //        obj: string.Join(" ", text.Take(text.Length - 2)),
+                //        price: double.Parse(text[text.Length - 2]),
+                //        currency: text[text.Length - 1]);
                 else
                 {
                     throw new ArgumentException("Invalid Data!");
@@ -129,8 +141,7 @@ namespace BotLibrary
                         chatId: e.Message.Chat,
                         text: "*Некорректные данные о покупке 🥴*\n\n" + replyMessage,
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        replyMarkup: force
-                        );
+                        replyMarkup: force);
             }
         }
 

@@ -16,6 +16,10 @@ namespace TelegramBot
 {
     public class Program
     {
+        /// <summary>
+        /// Объект botClient интерфейса ITelegramBotClient необходим для использоания
+        /// методов и событий.
+        /// </summary>
         private static ITelegramBotClient botClient;
 
         static void Main(string[] args)

@@ -164,6 +164,8 @@ namespace TelegramBot
                         break;
 
                     case "menu":
+                        await botClient.AnswerCallbackQueryAsync
+                           (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -229,6 +231,8 @@ namespace TelegramBot
                         break;
 
                     case "help":
+                        await botClient.AnswerCallbackQueryAsync
+                           (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -239,9 +243,11 @@ namespace TelegramBot
                         break;
 
                     case "input":
-
                         try
                         {
+                            await botClient.AnswerCallbackQueryAsync
+                           (e.CallbackQuery.Id);
+
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
                                 text: replyMessage,
@@ -257,6 +263,8 @@ namespace TelegramBot
                     case "output":
 
                         long id = e.CallbackQuery.Message.Chat.Id;
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id);
 
                         if (File.Exists(@"../../../data/purchases/" + id + ".json"))
                         {
@@ -274,9 +282,6 @@ namespace TelegramBot
                         }
                         else
                         {
-                            await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id);
-
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
                                 text: noJsonMessage,
@@ -285,6 +290,8 @@ namespace TelegramBot
                         break;
 
                     case "commands":
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id);
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,

@@ -14,7 +14,7 @@ namespace BotLibrary
             }
             set
             {
-                if (value == "")
+                if (String.IsNullOrWhiteSpace(value))
                 {
                     username = "NoName";
                 }

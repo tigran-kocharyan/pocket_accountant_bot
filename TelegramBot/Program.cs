@@ -92,7 +92,6 @@ namespace TelegramBot
                                 break;
 
                             default:
-                                Console.WriteLine(1);
                                 CommandHandler.ShowError(e, botClient);
                                 break;
                         }
@@ -165,8 +164,6 @@ namespace TelegramBot
                         break;
 
                     case "menu":
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Открываю Главное Меню 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -232,8 +229,6 @@ namespace TelegramBot
                         break;
 
                     case "help":
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Выберите, что Вас интересует 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,
@@ -244,8 +239,6 @@ namespace TelegramBot
                         break;
 
                     case "input":
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Выполните Ввод покупки 🗣");
 
                         try
                         {
@@ -262,8 +255,6 @@ namespace TelegramBot
                         break;
 
                     case "output":
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Вывожу Ваши покупки 🗣");
 
                         long id = e.CallbackQuery.Message.Chat.Id;
 
@@ -277,12 +268,15 @@ namespace TelegramBot
                             }
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
-                                text: $"*Ваши покупки вида:*\n_Название Цена Валюта Тип Дата_\n\n"
+                                text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
                                 + stringBuilder.ToString(),
                                 parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                         }
                         else
                         {
+                            await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id);
+
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
                                 text: noJsonMessage,
@@ -291,8 +285,6 @@ namespace TelegramBot
                         break;
 
                     case "commands":
-                        await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id, "Руководство по командам 🗣");
 
                         await botClient.EditMessageTextAsync(
                             chatId: chatID,

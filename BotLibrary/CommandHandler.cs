@@ -88,7 +88,7 @@ namespace BotLibrary
                     }
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
-                        text: $"*Ваши покупки вида:*\n_Название Цена Валюта Тип Дата_\n\n" 
+                        text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n" 
                         + stringBuilder.ToString(),
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }

@@ -94,18 +94,20 @@ namespace BotLibrary
             string[] parsedInput = Regex.Replace(message, @"\s+", " ").Split(' ');
 
             // Price Parsing.
-            int indexPrice = Array.FindIndex(parsedInput, e => double.TryParse(e, NumberStyles.None,
+            int indexPrice = Array.FindIndex(parsedInput, e => double.TryParse(e, NumberStyles.Any,
               CultureInfo.InvariantCulture, out productCost));
 
-            if (indexPrice < 1) return null;
+            
+            if (indexPrice < 1 || productCost < 0) return null;
             // Name Parsing.
             productName = string.Join(" ",
-              parsedInput.TakeWhile(e => !double.TryParse(e, out double price)));
+              parsedInput.TakeWhile(e => !double.TryParse(e, NumberStyles.Any,
+              CultureInfo.InvariantCulture, out double price)));
 
             // If it's all good, create the object.
 
             // Date Parsing.
-            int indexDate = Array.FindIndex(parsedInput, e => DateTime.TryParseExact(e, "yyyy-MM-dd",
+            int indexDate = Array.FindIndex(parsedInput, e => DateTime.TryParseExact(e, "dd-MM-yyyy",
                 CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out productDate));
 
             // Currency Parsing.
@@ -146,16 +148,15 @@ namespace BotLibrary
             {
                 for (int i = indexCurrency + 1; i < indexDate; i++)
                 {
-                    productType += parsedInput[i];
+                    productType += parsedInput[i] + " ";
                 }
             }
             else if (indexCurrency == indexPrice && indexDate != -1 
                 && indexDate != indexPrice+1)
             {
-                Console.WriteLine(indexDate);
                 for (int i = indexPrice + 1; i < indexDate; i++)
                 {
-                    productType += parsedInput[i];
+                    productType += parsedInput[i] + " ";
                 }
             }
             else if (indexCurrency != indexPrice && indexDate == -1
@@ -163,7 +164,7 @@ namespace BotLibrary
             {
                 for (int i = indexCurrency + 1; i < parsedInput.Length; i++)
                 {
-                    productType += parsedInput[i];
+                    productType += parsedInput[i] + " ";
                 }
             }
             else if (indexCurrency == indexPrice 
@@ -171,7 +172,7 @@ namespace BotLibrary
             {
                 for (int i = indexPrice + 1; i < parsedInput.Length; i++)
                 {
-                    productType += parsedInput[i];
+                    productType += parsedInput[i] + " ";
                 }
             }
             else

@@ -14,13 +14,13 @@ namespace BotLibrary
             }
             set
             {
-                if (value == null)
+                if (value == "")
                 {
                     username = "NoName";
                 }
                 else
                 {
-                    username = "@"+value;
+                    username = value;
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace BotLibrary
         private bool isContains(long id) => File.ReadAllText(pathUsers).Contains
             ($"ID: {id}");
         private void AddUser(string username, long id) => File.AppendAllText(pathUsers,
-            $"[User] => ID: {id} | {username}");
+            $"[User] => ID: {id} | {username}\n");
 
         public static void WriteJSON(User user)
         {

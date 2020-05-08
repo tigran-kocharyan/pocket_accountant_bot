@@ -90,6 +90,7 @@ namespace BotLibrary
                         chatId: e.Message.Chat,
                         text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n" 
                         + stringBuilder.ToString(),
+                        replyMarkup: analysisMarkup,
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
                 else

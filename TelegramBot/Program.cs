@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Threading;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
+using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using BotLibrary;
-using System.IO;
 using static BotLibrary.Phrases;
 using static BotLibrary.Markups;
+using static BotLibrary.Analysis;
 //using System.Net;
-using System.Collections.Generic;
-using System.Text;
+
 //using System.Threading.Tasks;
 //using MihaZupan;
 
@@ -280,9 +283,11 @@ namespace TelegramBot
                             }
                             await botClient.SendTextMessageAsync(
                                 chatId: chatID,
-                                text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
+                                text: $"*Ваши покупки вида:*\n" +
+                                $"_Название Цена Валюта Категория Дата_\n\n"
                                 + stringBuilder.ToString(),
-                                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                                replyMarkup: analysisMarkup,
+                                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown); ;
                         }
                         else
                         {
@@ -303,6 +308,24 @@ namespace TelegramBot
                             parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                             messageId: e.CallbackQuery.Message.MessageId,
                             replyMarkup: menuMarkup);
+                        break;
+
+                    case "graphic":
+                        await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id);
+
+                        var purchasesList = PurchaseInfo.ReadPurchase(chatID);
+                        purchasesList = purchasesList.OrderBy(x => x.Date).ToList();
+                        var purchasesSums = purchasesList.GroupBy(y => y.Date)
+                            .Select(a => a.Sum(b => b.Price)).ToList();
+                        var purchasesDates = purchasesList.Select(a => a.Date).
+                            Distinct().ToList();
+
+                        GraphicAnalysis(purchasesSums, purchasesDates, chatID);
+                        botClient.SendPhotoAsync(chatId: chatID,
+                            photo: new Telegram.Bot.Types.InputFiles.InputOnlineFile
+                            ($"../../../data/{chatID}.png"),
+                            caption: "Вот график Ваших расходов:");
                         break;
 
                     default:

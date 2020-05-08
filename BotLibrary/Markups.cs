@@ -82,5 +82,14 @@ namespace BotLibrary
                 }
 });
 
+        public static InlineKeyboardMarkup analysisMarkup =
+            new InlineKeyboardMarkup(new InlineKeyboardButton[][]
+{
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("График расходов 📈","graphic")
+                }
+});
+
     }
 }

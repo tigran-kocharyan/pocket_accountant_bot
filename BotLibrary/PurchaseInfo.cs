@@ -26,7 +26,7 @@ namespace BotLibrary
             set
             {
                 if (value == default)
-                    date = DateTime.Now;
+                    date = DateTime.Now.Date;
                 else
                     date = value;
 

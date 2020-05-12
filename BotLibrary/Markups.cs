@@ -56,6 +56,7 @@ namespace BotLibrary
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData("Команды 🏦","commands"),
+                    InlineKeyboardButton.WithCallbackData("Цель 🏆","goal"),
                     InlineKeyboardButton.WithCallbackData("Помощь 🤝","help")
                 },
                 new []
@@ -66,10 +67,6 @@ namespace BotLibrary
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData("Настройки ⚙️","setting")
-                },
-                new []
-                {
-                    InlineKeyboardButton.WithCallbackData("Главное меню 🔠","menu")
                 }
 });
 
@@ -88,6 +85,31 @@ namespace BotLibrary
                 new []
                 {
                     InlineKeyboardButton.WithCallbackData("График расходов 📈","graphic")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Удалить покупки ❌","deletePurchase")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Главное меню 🔠","menu")
+                }
+});
+
+        public static InlineKeyboardMarkup editGoalMarkup =
+            new InlineKeyboardMarkup(new InlineKeyboardButton[][]
+{
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Добавить в Сбережения ❎","addGoal")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Удалить Цель ❌","deleteGoal")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Главное меню 🔠","menu")
                 }
 });
 

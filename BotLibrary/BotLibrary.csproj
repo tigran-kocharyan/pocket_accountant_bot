@@ -79,8 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis.cs" />
+    <Compile Include="CallbackHandler.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="CurrencyParser.cs" />
+    <Compile Include="Goal.cs" />
     <Compile Include="Markups.cs" />
     <Compile Include="Phrases.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

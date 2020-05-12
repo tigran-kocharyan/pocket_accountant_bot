@@ -12,6 +12,8 @@ namespace BotLibrary
 {
     public class Analysis
     {
+        public static string analysisPath = "../../../data/graphics/";
+
         public static void GraphicAnalysis(List<double> purchases, List<DateTime> dates, long id)
         {
             double maxPrice = purchases.Max();
@@ -31,7 +33,6 @@ namespace BotLibrary
             List<double> moneys = new List<double>();
             for (int i = 0; i < purchases.Count; i++)
             {
-                Console.WriteLine(purchases[i]);
                 moneys.Add(height - purchases[i] / 10);
             }
 
@@ -55,10 +56,10 @@ namespace BotLibrary
                 graphics.DrawLines(new Pen(Color.Red, 5), curve.ToArray());
 
                 // Чертим оси X и Y.
-                graphics.DrawLine(new Pen(Color.Blue, 5),
+                graphics.DrawLine(new Pen(Color.Blue, 3),
                                   new Point(20, 0),
                                   new Point(20, maxHeight));
-                graphics.DrawLine(new Pen(Color.Blue, 5),
+                graphics.DrawLine(new Pen(Color.Blue, 3),
                                   new Point(0, height),
                                   new Point(maxWidth, height));
 
@@ -74,16 +75,15 @@ namespace BotLibrary
                         new Font("Arial", 12, FontStyle.Bold),
                         Brushes.Black,
                         curve[i].X - 50, curve[i].Y - 25);
-                    graphics.DrawEllipse(new Pen(Color.Black, 8),
-                        new RectangleF(curve[i].X - 2, curve[i].Y - 2, 4, 4));
+                    graphics.DrawEllipse(new Pen(Color.Black, 6),
+                        new RectangleF(curve[i].X - 2, curve[i].Y - 2, 3, 3));
                     graphics.FillEllipse(new SolidBrush(Color.Black),
-                        new RectangleF(curve[i].X - 2, curve[i].Y - 2, 4, 4));
+                        new RectangleF(curve[i].X - 2, curve[i].Y - 2, 3, 3));
                 }
             }
 
-
-            map.Save($"../../../data/graphics/{id}.png", System.Drawing.Imaging.ImageFormat.Png);
-            Console.ReadLine();
+            // Сохраняем Bitmap в виду PNG-изображения.
+            map.Save($"{analysisPath}{id}.png", System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

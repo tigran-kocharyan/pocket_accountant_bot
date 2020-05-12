@@ -50,8 +50,8 @@ namespace BotLibrary
             {
                 Console.WriteLine($"File Error with {username}. Error: {e}");
             }
-
         }
+
         private bool isContains(long id) => File.ReadAllText(pathUsers).Contains
             ($"ID: {id}");
         private void AddUser(string username, long id) => File.AppendAllText(pathUsers,
@@ -98,5 +98,3 @@ namespace BotLibrary
         }
     }
 }
-
-//($"[User] => Name: {username}, ID: {id}{newLine}");

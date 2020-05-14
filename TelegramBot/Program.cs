@@ -26,6 +26,8 @@ namespace TelegramBot
 
         static void Main(string[] args)
         {
+            //Analysis.Main(null);
+            //return;
             try
             {
                 //var proxy = new HttpToSocks5Proxy("p.webshare.io", 1080, "kgeylycq-1", "cnhaxv69p8lf");
@@ -57,6 +59,8 @@ namespace TelegramBot
 
             try
             {
+                CommandHandler.DoStart(e, botClient);
+                return;
                 switch (text)
                 {
                     case null:
@@ -107,6 +111,7 @@ namespace TelegramBot
 
         private static async void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
+            return;
             var data = e.CallbackQuery.Data;
             var chatID = e.CallbackQuery.Message.Chat.Id;
             try

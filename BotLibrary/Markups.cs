@@ -88,6 +88,10 @@ namespace BotLibrary
                 },
                 new []
                 {
+                    InlineKeyboardButton.WithCallbackData("Круговая Диаграмма Категорий 🧿","pie")
+                },
+                new []
+                {
                     InlineKeyboardButton.WithCallbackData("Удалить покупки ❌","deletePurchase")
                 },
                 new []

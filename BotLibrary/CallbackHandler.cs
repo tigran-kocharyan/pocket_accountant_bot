@@ -313,13 +313,61 @@ namespace BotLibrary
                     file.FileName = "Graphic";
                     await botClient.SendPhotoAsync(chatId: chatID,
                     photo: file,
-                    caption: "Вот график Ваших расходов:");
+                    caption: "Вот *График* Ваших расходов по датам:",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
             }
             catch (System.Exception)
             {
                 System.Console.WriteLine("[Markup] Error");
             }
+        }
+
+        /// <summary>
+        /// Метод для вывода круговой диаграммы расходов в чат.
+        /// Использует System.Design для отрисовки Bitmap.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
+        public async static void PieShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
+        {
+
+            var chatID = e.CallbackQuery.Message.Chat.Id;
+            await botClient.AnswerCallbackQueryAsync
+                            (e.CallbackQuery.Id);
+
+            // Считывание всех покупок из JSON. Затем сортировка по дате и суммирование цен.
+            var purchasesList = PurchaseInfo.ReadPurchase(chatID);
+
+            // Группируем элементы в подсписки по категории покупок.
+            var purchasesGrouped = purchasesList.GroupBy(el => el.Type);
+
+            // Из сгруппированных списков извлекаем только значения ключа, по которому группировали.
+            var categoriesGroup = purchasesGrouped.Select(el => el.Key).ToList();
+
+            // Из сгруппированных списков извлекаем сумму всех покупок этого типа.
+            var categoriesCount = purchasesGrouped.Select(el => el.Count()).ToList();
+
+            // Соединяем список типов и сумму покупок этих типов.
+            var categoriesPercentage =
+                categoriesGroup.Zip(categoriesCount, (a, b) => new { a, b }).OrderByDescending(el => el.b).ToList();
+
+            // Вызываем метод, который сохранит круговую диаграмму.
+            Analysis.PieAnalysis(categoriesPercentage.Select(el => el.b).ToList(),
+                categoriesPercentage.Select(el => el.a).ToList(),
+                chatID);
+
+            // С помощью потока загружаем изображение в чат.
+            using (var stream = File.Open($"../../../data/pies/{chatID}.png", FileMode.Open))
+            {
+                var file = new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream);
+                file.FileName = "Pie";
+                await botClient.SendPhotoAsync(chatId: chatID,
+                photo: file,
+                caption: "Вот *Круговая Диаграмма* Ваших расходов по категориям:",
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+            }
+
         }
 
         /// <summary>
@@ -347,7 +395,7 @@ namespace BotLibrary
             catch (System.Exception)
             {
                 System.Console.WriteLine("[Markup] Error");
-            } 
+            }
         }
 
         /// <summary>

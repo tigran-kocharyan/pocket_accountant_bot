@@ -179,6 +179,10 @@ namespace TelegramBot
                         CallbackHandler.GoalShow(e, botClient);
                         break;
 
+                    case "pie":
+                        CallbackHandler.PieShow(e, botClient);
+                        break;
+
                     case "graphic":
                         CallbackHandler.GraphicShow(e, botClient);
                         break;

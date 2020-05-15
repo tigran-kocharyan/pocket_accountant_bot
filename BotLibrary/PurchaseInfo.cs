@@ -196,6 +196,7 @@ namespace BotLibrary
 
             if (indexCurrency != indexPrice && indexDate != -1)
             {
+                
                 for (int i = indexCurrency + 1; i < indexDate; i++)
                 {
                     productType += parsedInput[i] + " ";
@@ -229,9 +230,12 @@ namespace BotLibrary
             {
                 productType = "Разное";
             }
+
             return new PurchaseInfo(productName, productCost, productCurrency,
               productType, productDate);
         }
+
+
 
         public override string ToString()
         {

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using static BotLibrary.Phrases;
 using static BotLibrary.Markups;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BotLibrary
 {
@@ -29,12 +27,10 @@ namespace BotLibrary
             }
         }
 
-
-
         public async static void AddMoneyToGoal(MessageEventArgs e, ITelegramBotClient botClient)
         {
             if (double.TryParse(e.Message.Text, NumberStyles.Any,
-                  CultureInfo.InvariantCulture, out double money))
+                  CultureInfo.InvariantCulture, out double money) && money>=1)
             {
                 Goal goal = Goal.ReadGoal(e.Message.Chat.Id);
                 goal.GoalPrice -= money;
@@ -97,8 +93,6 @@ namespace BotLibrary
             }
         }
 
-
-
         public async static void GetExpense(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -112,7 +106,8 @@ namespace BotLibrary
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
-                        + purchasesString,
+                        + purchasesString + "\n*Так же Вы можете получить анализ, " +
+                        "нажав на соответствующую кнопку ниже 📊*",
                         replyMarkup: analysisMarkup,
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
                 }
@@ -240,8 +235,6 @@ namespace BotLibrary
             }
         }
 
-
-
         public async static void ShowCommands(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -271,8 +264,6 @@ namespace BotLibrary
             }
 
         }
-
-
 
         /// <summary>
         /// Вывод сообщения об ошибке в чат с пользователем.

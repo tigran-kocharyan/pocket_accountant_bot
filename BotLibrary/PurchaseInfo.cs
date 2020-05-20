@@ -194,9 +194,9 @@ namespace BotLibrary
             // Type Parsing.
             productType = String.Empty;
 
-            if (indexCurrency != indexPrice && indexDate != -1)
+            if (indexCurrency != indexPrice && indexDate != -1
+                 && indexCurrency != indexDate - 1)
             {
-                
                 for (int i = indexCurrency + 1; i < indexDate; i++)
                 {
                     productType += parsedInput[i] + " ";
@@ -211,7 +211,7 @@ namespace BotLibrary
                 }
             }
             else if (indexCurrency != indexPrice && indexDate == -1
-                && indexCurrency != parsedInput.Length - 1)
+                && indexCurrency != parsedInput.Length - 1 && indexCurrency != indexDate-1)
             {
                 for (int i = indexCurrency + 1; i < parsedInput.Length; i++)
                 {
@@ -231,11 +231,11 @@ namespace BotLibrary
                 productType = "Разное";
             }
 
+            productType = productType.Trim();
+
             return new PurchaseInfo(productName, productCost, productCurrency,
               productType, productDate);
         }
-
-
 
         public override string ToString()
         {

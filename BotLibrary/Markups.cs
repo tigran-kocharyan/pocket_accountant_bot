@@ -4,8 +4,8 @@ namespace BotLibrary
 {
     public class Markups
     {
-        public static Telegram.Bot.Types.ReplyMarkups.ForceReplyMarkup force =
-            new Telegram.Bot.Types.ReplyMarkups.ForceReplyMarkup();
+        public static ForceReplyMarkup force =
+            new ForceReplyMarkup();
 
         public static InlineKeyboardMarkup helpMarkup =
             new InlineKeyboardMarkup(new InlineKeyboardButton[][]
@@ -92,7 +92,29 @@ namespace BotLibrary
                 },
                 new []
                 {
-                    InlineKeyboardButton.WithCallbackData("Удалить покупки ❌","deletePurchase")
+                    InlineKeyboardButton.WithCallbackData("Удалить покупки ❌","deletePurchase"),
+                    InlineKeyboardButton.WithCallbackData("Фильтр ✂️","filterPurchase")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("Главное меню 🔠","menu")
+                }
+});
+
+        public static InlineKeyboardMarkup filterMarkup =
+            new InlineKeyboardMarkup(new InlineKeyboardButton[][]
+{
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("За Сегодня 📝","today")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("За этот месяц 📑","month")
+                },
+                new []
+                {
+                    InlineKeyboardButton.WithCallbackData("За всё время 🛒","alltime")
                 },
                 new []
                 {

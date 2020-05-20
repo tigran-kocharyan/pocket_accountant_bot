@@ -9,3 +9,7 @@
 [User] => ID: 59851650 | shehasaad
 [User] => ID: 582463352 | bye_haqi
 [User] => ID: 927071893 | cortan122
+[User] => ID: 165468774 | pudthaimaidai
+[User] => ID: 245854380 | scjudicator
+[User] => ID: 779455021 | talehimanov
+[User] => ID: 1089526235 | HolisticProgramming

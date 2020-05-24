@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -160,6 +161,27 @@ namespace BotLibrary
             }
         }
 
+        public async static void FilterShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
+        {
+            try
+            {
+                var chatID = e.CallbackQuery.Message.Chat.Id;
+                await botClient.AnswerCallbackQueryAsync
+                               (e.CallbackQuery.Id);
+
+                await botClient.EditMessageTextAsync(
+                    chatId: chatID,
+                    text: filterMessage,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                    messageId: e.CallbackQuery.Message.MessageId,
+                    replyMarkup: filterMarkup);
+            }
+            catch
+            {
+                System.Console.WriteLine("[Markup] Error");
+            }
+        }
+
         public async static void InputShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -201,11 +223,123 @@ namespace BotLibrary
                         chatId: chatID,
                         text: $"*Ваши покупки вида:*\n" +
                         $"_Название Цена Валюта Категория Дата_\n\n"
-                        + stringBuilder.ToString(),
+                        + stringBuilder.ToString() + "\n*Так же Вы можете получить анализ, " +
+                        "нажав на соответствующую кнопку ниже 📊*",
                         parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                         messageId: e.CallbackQuery.Message.MessageId,
                         replyMarkup: analysisMarkup);
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatID,
+                        text: noJsonMessage,
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                }
+            }
+            catch
+            {
+                System.Console.WriteLine("[Markup] Error");
+            }
+        }
 
+        public async static void OutputTodayShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
+        {
+            try
+            {
+                var chatID = e.CallbackQuery.Message.Chat.Id;
+                long id = e.CallbackQuery.Message.Chat.Id;
+                await botClient.AnswerCallbackQueryAsync
+                    (e.CallbackQuery.Id);
+
+                if (File.Exists(@"../../../data/purchases/" + id + ".json"))
+                {
+                    List<PurchaseInfo> purchases = PurchaseInfo.ReadPurchase(chatID);
+                    var purchasesToday = purchases.Where(ex => ex.Date.Day == DateTime.Now.Day).ToList();
+
+                    if (purchasesToday.Count != 0)
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < purchasesToday.Count; i++)
+                        {
+                            stringBuilder.AppendLine($"{i + 1}. " + purchasesToday[i].ToString());
+                        }
+                        await botClient.EditMessageTextAsync(
+                            chatId: chatID,
+                            text: $"*Ваши покупки вида за сегодня 📝:*\n" +
+                            $"_Название Цена Валюта Категория Дата_\n\n"
+                            + stringBuilder.ToString(),
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: filterMarkup);
+                    }
+                    else
+                    {
+                        await botClient.EditMessageTextAsync(
+                            chatId: chatID,
+                            text: $"*Хммм, произошла ошибочка 🤨*\n"+
+                            "*Похоже, у Вас нет покупок за сегодня 📝*\n\n" +
+                            $"Попробуйте воспользоваться командой /add\\_expense, чтобы их добавить 🙃",
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: filterMarkup);
+                    }
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatID,
+                        text: noJsonMessage,
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                }
+            }
+            catch
+            {
+                System.Console.WriteLine("[Markup] Error");
+            }
+        }
+
+        public async static void OutputMonthShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
+        {
+            try
+            {
+                var chatID = e.CallbackQuery.Message.Chat.Id;
+                long id = e.CallbackQuery.Message.Chat.Id;
+                await botClient.AnswerCallbackQueryAsync
+                    (e.CallbackQuery.Id);
+
+                if (File.Exists(@"../../../data/purchases/" + id + ".json"))
+                {
+                    List<PurchaseInfo> purchases = PurchaseInfo.ReadPurchase(chatID);
+                    var purchasesMonth = purchases.Where(ex => ex.Date.Month == DateTime.Now.Month).ToList();
+
+                    if(purchasesMonth.Count != 0)
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < purchasesMonth.Count; i++)
+                        {
+                            stringBuilder.AppendLine($"{i + 1}. " + purchasesMonth[i].ToString());
+                        }
+                        await botClient.EditMessageTextAsync(
+                            chatId: chatID,
+                            text: $"*Ваши покупки за месяц вида 📑:*\n" +
+                            $"_Название Цена Валюта Категория Дата_\n\n"
+                            + stringBuilder.ToString(),
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: filterMarkup);
+                    }
+                    else
+                    {
+                        await botClient.EditMessageTextAsync(
+                            chatId: chatID,
+                            text: $"*Хммм, произошла ошибочка 🤨*\n" +
+                            "*Похоже, у Вас нет покупок за этот месяц 📑*\n\n" +
+                            $"Попробуйте воспользоваться командой /add\\_expense, чтобы их добавить 🙃",
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                            messageId: e.CallbackQuery.Message.MessageId,
+                            replyMarkup: filterMarkup);
+                    }
                 }
                 else
                 {
@@ -246,7 +380,7 @@ namespace BotLibrary
                     await botClient.EditMessageTextAsync(
                     chatId: chatID,
                     text: $"*На данный момент Вы копите на {goal.GoalName}* 💸\n\n" +
-                    $"До цели => *{goal.GoalPrice} {goal.GoalCurrency}*",
+                    $"До цели ➡ *{goal.GoalPrice} {goal.GoalCurrency}*",
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                     messageId: e.CallbackQuery.Message.MessageId,
                     replyMarkup: editGoalMarkup);
@@ -295,6 +429,61 @@ namespace BotLibrary
 
                 // Считывание всех покупок из JSON. Затем сортировка по дате и суммирование цен.
                 var purchasesList = PurchaseInfo.ReadPurchase(chatID);
+
+                // Считаем предпочтительную валюту пользователя.
+                var currency = User.ReadJSON(chatID).PreferableCurrency;
+
+                bool hasUSD = false;
+                bool hasRUB = false;
+                API_Obj USD = null;
+                API_Obj RUB = null;
+
+                foreach (var purchase in purchasesList)
+                {
+                    if (purchase.Currency == "USD" && currency == "RUB" && hasUSD==false)
+                    {
+                        USD = CurrencyParser.GetRates("USD");
+                        hasUSD = true;
+                    }
+                    else if (purchase.Currency == "RUB" && currency == "USD" && hasRUB == false)
+                    {
+                        RUB = CurrencyParser.GetRates("RUB");
+                        hasRUB = true;
+                    }
+
+                }
+
+                foreach (var purchase in purchasesList)
+                {
+                    if (purchase.Currency == "USD" && currency == "RUB")
+                    {
+                        if(USD!=null)
+                            purchase.Price *= USD.conversion_rates.RUB;
+                        else
+                            purchase.Price *= 73.61;
+                    }    
+
+                    else if (purchase.Currency == "RUB" && currency == "USD")
+                    {
+                        if (RUB != null)
+                            purchase.Price *= RUB.conversion_rates.USD;
+                        else
+                            purchase.Price *= 0.014;
+                    }
+
+                    else if (purchase.Currency == "USD" && currency == "UZS")
+                        purchase.Price *= 10110.00;
+
+                    else if (purchase.Currency == "UZS" && currency == "USD")
+                        purchase.Price *= 0.000099;
+
+                    else if (purchase.Currency == "RUB" && currency == "UZS")
+                        purchase.Price *= 137.34;
+
+                    else if (purchase.Currency == "UZS" && currency == "RUB")
+                        purchase.Price *= 0.0073;
+                }
+
                 purchasesList = purchasesList.OrderBy(x => x.Date).ToList();
                 var purchasesSums = purchasesList.GroupBy(y => y.Date)
                     .Select(a => a.Sum(b => b.Price)).ToList();
@@ -331,43 +520,48 @@ namespace BotLibrary
         /// <param name="botClient"></param>
         public async static void PieShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
-
-            var chatID = e.CallbackQuery.Message.Chat.Id;
-            await botClient.AnswerCallbackQueryAsync
-                            (e.CallbackQuery.Id);
-
-            // Считывание всех покупок из JSON. Затем сортировка по дате и суммирование цен.
-            var purchasesList = PurchaseInfo.ReadPurchase(chatID);
-
-            // Группируем элементы в подсписки по категории покупок.
-            var purchasesGrouped = purchasesList.GroupBy(el => el.Type);
-
-            // Из сгруппированных списков извлекаем только значения ключа, по которому группировали.
-            var categoriesGroup = purchasesGrouped.Select(el => el.Key).ToList();
-
-            // Из сгруппированных списков извлекаем сумму всех покупок этого типа.
-            var categoriesCount = purchasesGrouped.Select(el => el.Count()).ToList();
-
-            // Соединяем список типов и сумму покупок этих типов.
-            var categoriesPercentage =
-                categoriesGroup.Zip(categoriesCount, (a, b) => new { a, b }).OrderByDescending(el => el.b).ToList();
-
-            // Вызываем метод, который сохранит круговую диаграмму.
-            Analysis.PieAnalysis(categoriesPercentage.Select(el => el.b).ToList(),
-                categoriesPercentage.Select(el => el.a).ToList(),
-                chatID);
-
-            // С помощью потока загружаем изображение в чат.
-            using (var stream = File.Open($"../../../data/pies/{chatID}.png", FileMode.Open))
+            try
             {
-                var file = new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream);
-                file.FileName = "Pie";
-                await botClient.SendPhotoAsync(chatId: chatID,
-                photo: file,
-                caption: "Вот *Круговая Диаграмма* Ваших расходов по категориям:",
-                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
-            }
+                var chatID = e.CallbackQuery.Message.Chat.Id;
+                await botClient.AnswerCallbackQueryAsync
+                                (e.CallbackQuery.Id);
 
+                // Считывание всех покупок из JSON. Затем сортировка по дате и суммирование цен.
+                var purchasesList = PurchaseInfo.ReadPurchase(chatID);
+
+                // Группируем элементы в подсписки по категории покупок.
+                var purchasesGrouped = purchasesList.GroupBy(el => el.Type);
+                
+                // Из сгруппированных списков извлекаем только значения ключа, по которому группировали.
+                var categoriesGroup = purchasesGrouped.Select(el => el.Key).ToList();
+
+                // Из сгруппированных списков извлекаем сумму всех покупок этого типа.
+                var categoriesCount = purchasesGrouped.Select(el => el.Count()).ToList();
+
+                // Соединяем список типов и сумму покупок этих типов.
+                var categoriesPercentage =
+                    categoriesGroup.Zip(categoriesCount, (a, b) => new { a, b }).OrderByDescending(el => el.b).ToList();
+
+                // Вызываем метод, который сохранит круговую диаграмму.
+                Analysis.PieAnalysis(categoriesPercentage.Select(el => el.b).ToList(),
+                    categoriesPercentage.Select(el => el.a).ToList(),
+                    chatID);
+
+                // С помощью потока загружаем изображение в чат.
+                using (var stream = File.Open($"../../../data/pies/{chatID}.png", FileMode.Open))
+                {
+                    var file = new Telegram.Bot.Types.InputFiles.InputOnlineFile(stream);
+                    file.FileName = "Pie";
+                    await botClient.SendPhotoAsync(chatId: chatID,
+                    photo: file,
+                    caption: "Вот *Круговая Диаграмма* Ваших расходов по категориям:",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                }
+            }
+            catch (System.Exception)
+            {
+                System.Console.WriteLine("[Markup] Error");
+            }
         }
 
         /// <summary>
@@ -395,7 +589,7 @@ namespace BotLibrary
             catch (System.Exception)
             {
                 System.Console.WriteLine("[Markup] Error");
-            }
+            } 
         }
 
         /// <summary>

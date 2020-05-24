@@ -36,7 +36,6 @@ namespace TelegramBot
                 { Timeout = TimeSpan.FromSeconds(10) };
 
                 Console.WriteLine($"[{DateTime.Now}]: Bot is running...");
-                Console.WriteLine("Current $USD rate is " + CurrencyParser.getCurrency());
 
                 botClient.OnMessage += Bot_OnMessage;
                 botClient.OnCallbackQuery += Bot_OnCallbackQuery;
@@ -190,6 +189,22 @@ namespace TelegramBot
 
                     case "graphic":
                         CallbackHandler.GraphicShow(e, botClient);
+                        break;
+
+                    case "filterPurchase":
+                        CallbackHandler.FilterShow(e, botClient);
+                        break;
+
+                    case "today":
+                        CallbackHandler.OutputTodayShow(e, botClient);
+                        break;
+
+                    case "month":
+                        CallbackHandler.OutputMonthShow(e, botClient);
+                        break;
+
+                    case "alltime":
+                        CallbackHandler.OutputShow(e, botClient);
                         break;
 
                     case "deletePurchase":

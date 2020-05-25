@@ -9,8 +9,13 @@ using Newtonsoft.Json;
 
 namespace BotLibrary
 {
+    /// <summary>
+    /// Класс, который хранит все методы и поля для хранения информации
+    /// о покупках.
+    /// </summary>
     public class PurchaseInfo
     {
+        // Путь хранения информации о покупках и поля для заполнения.
         private static string path = @"../../../data/purchases/";
         private DateTime date;
         public string Obj { get; set; }
@@ -33,6 +38,14 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Конструктор для создания объектов класса PurchaseInfo.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="price"></param>
+        /// <param name="currency"></param>
+        /// <param name="type"></param>
+        /// <param name="date"></param>
         public PurchaseInfo(string obj, double price, string currency,
           string type, DateTime date)
         {
@@ -43,6 +56,11 @@ namespace BotLibrary
             Type = type;
         }
 
+        /// <summary>
+        /// Метод для записи покупок в файл JSON.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="purchase"></param>
         public static void WritePurchase(long id, PurchaseInfo purchase)
         {
             List<PurchaseInfo> purchases = new List<PurchaseInfo>();
@@ -62,6 +80,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для чтения информации о покупках из файла JSON.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static List<PurchaseInfo> ReadPurchase(long id)
         {
             using (JsonReader fs = new JsonTextReader(new StreamReader($"{path}{id}.json")))
@@ -73,6 +96,13 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод, который с помощью StringBuilder объединяет
+        /// информацию о всех покупках из полученного списка и
+        /// возвращает в виде строки.
+        /// </summary>
+        /// <param name="purchases"></param>
+        /// <returns></returns>
         public static string PurchasesToString(List<PurchaseInfo> purchases)
         {
 
@@ -85,6 +115,11 @@ namespace BotLibrary
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// Метод для удаления конкретной покупки из общего списка.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="number"></param>
         public static void DeletePurchases(long id, int number)
         {
             var purchases = ReadPurchase(id);
@@ -102,6 +137,12 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для удаления диапазона покупок из общего списка. Перегрузка.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="leftBorder"></param>
+        /// <param name="rightBorder"></param>
         public static void DeletePurchases(long id, int leftBorder, int rightBorder)
         {
             var purchases = ReadPurchase(id);
@@ -123,6 +164,12 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод, который меняет значение поля валюты 
+        /// на привычный пользователю.
+        /// </summary>
+        /// <param name="currency"></param>
+        /// <returns></returns>
         public static string RenameCurrency(string currency)
         {
             if (currency == "RUB")
@@ -133,6 +180,13 @@ namespace BotLibrary
                 return "СУМ";
         }
 
+        /// <summary>
+        /// Обработка сообщений с покупками для извлечения важной информации
+        /// и дальнейшего создания объекта класса PurchaseInfo.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static PurchaseInfo PurchaseParsing(string message, long id)
         {
             string productName = String.Empty;
@@ -237,9 +291,16 @@ namespace BotLibrary
               productType, productDate);
         }
 
+        /// <summary>
+        /// Переопределенный метод для вывода информации о покупке.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return $"{Obj} {Price} {RenameCurrency(Currency)} {Type} {Date.ToShortDateString()}";
+            
+            return $"{Obj.Replace("_", "").Replace("`", "").Replace("*", "")} {Price} " +
+                $"{RenameCurrency(Currency)} {Type.Replace("_", "").Replace("`", "").Replace("*", "")} " +
+                $"{Date.ToShortDateString()}";
         }
     }
 }

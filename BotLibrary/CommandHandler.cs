@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Globalization;
+using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Telegram.Bot;
@@ -10,8 +12,17 @@ using static BotLibrary.Markups;
 
 namespace BotLibrary
 {
+    /// <summary>
+    /// Класс, который хранит в себе статические методы
+    /// отправки сообщений
+    /// </summary>
     public class CommandHandler
     {
+        /// <summary>
+        /// Метод для отправки сообщения
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void DoStart(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -27,10 +38,15 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для добавки суммы сбережений к накоплениям.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void AddMoneyToGoal(MessageEventArgs e, ITelegramBotClient botClient)
         {
             if (double.TryParse(e.Message.Text, NumberStyles.Any,
-                  CultureInfo.InvariantCulture, out double money) && money>=1)
+                  CultureInfo.InvariantCulture, out double money) && money >= 1)
             {
                 Goal goal = Goal.ReadGoal(e.Message.Chat.Id);
                 goal.GoalPrice -= money;
@@ -63,6 +79,11 @@ namespace BotLibrary
             // вывести сообщение из CheckGoal и обновить маркап.
         }
 
+        /// <summary>
+        /// Метод для добавления цели и установки ее стоимости.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void AddGoal(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -93,6 +114,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для получения списка покупок за период.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void GetExpense(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -100,16 +126,51 @@ namespace BotLibrary
                 if (File.Exists(@"../../../data/purchases/" + e.Message.Chat.Id + ".json"))
                 {
                     List<PurchaseInfo> purchases = PurchaseInfo.ReadPurchase(e.Message.Chat.Id);
+                    int size = purchases.Count;
+                    int temp = 0;
+                    if (size > 50)
+                    {
+                        while (size - temp > 50)
+                        {
+                            var purhasesTemp = purchases.Skip(temp).Take(30).ToList();
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (int i = temp; i < temp + 50; i++)
+                            {
+                                stringBuilder.AppendLine($"{i + 1}. " + purchases[i].ToString());
+                            }
+                            await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
+                                + stringBuilder,
+                                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                            temp += 50;
+                        }
 
-                    string purchasesString = PurchaseInfo.PurchasesToString(purchases);
+                        StringBuilder lastBuilder = new StringBuilder();
+                        for (int i = temp; i < size; i++)
+                        {
+                            lastBuilder.AppendLine($"{i + 1}. " + purchases[i].ToString());
+                        }
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
+                            + lastBuilder + "\n*Так же Вы можете получить анализ, " +
+                            "нажав на соответствующую кнопку ниже 📊*",
+                            replyMarkup: analysisMarkup,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    }
+                    else
+                    {
+                        string purchasesString = PurchaseInfo.PurchasesToString(purchases);
 
-                    await botClient.SendTextMessageAsync(
-                        chatId: e.Message.Chat,
-                        text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
-                        + purchasesString + "\n*Так же Вы можете получить анализ, " +
-                        "нажав на соответствующую кнопку ниже 📊*",
-                        replyMarkup: analysisMarkup,
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: $"*Ваши покупки вида:*\n_Название Цена Валюта Категория Дата_\n\n"
+                            + purchasesString + "\n*Так же Вы можете получить анализ, " +
+                            "нажав на соответствующую кнопку ниже 📊*",
+                            replyMarkup: analysisMarkup,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                    }
                 }
                 else
                 {
@@ -125,6 +186,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для обработки полученного ответа от пользователя на запрос ввода покупок.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void FillExpense(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -168,6 +234,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для добавления расхода к списку и отправки запроса на ввод покупок.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void AddExpense(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -184,6 +255,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для удаления покупки из списка покупок.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void DeleteExpense(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -235,6 +311,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для показа сообщения с доступными командами.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void ShowCommands(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -249,6 +330,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с помощью.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void ShowHelp(MessageEventArgs e, ITelegramBotClient botClient)
         {
             try

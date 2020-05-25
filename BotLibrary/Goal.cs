@@ -12,8 +12,12 @@ namespace BotLibrary
     /// </summary>
     public class Goal
     {
+        /// <summary>
+        /// Путь, по которому сохраняется цель
+        /// </summary>
         public static string goalPath = "../../../data/goals/";
 
+        // Поля для хранения данных.
         public string GoalName { get; set; }
         public double GoalPrice { get; set; }
         public string GoalCurrency { get; set; }
@@ -25,6 +29,11 @@ namespace BotLibrary
             GoalCurrency = PurchaseInfo.RenameCurrency(currency);
         }
 
+        /// <summary>
+        /// Запись объекта Goal в отдельный файл.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="goal"></param>
         public static void WriteGoal(long id, Goal goal)
         {
             using (JsonWriter fs = new JsonTextWriter(new StreamWriter($"{goalPath}{id}.json")))
@@ -34,6 +43,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Считывание файла цели и возврат заполненного объекта Goal.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static Goal ReadGoal(long id)
         {
             using (JsonReader fs = new JsonTextReader(new StreamReader($"{goalPath}{id}.json")))
@@ -44,6 +58,12 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Проверка на достижение цели.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="goal"></param>
+        /// <returns></returns>
         public static string CheckGoal(long id, Goal goal)
         {
             if (goal.GoalPrice <= 0)
@@ -61,6 +81,10 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Удаление цели пользователя и его файла.
+        /// </summary>
+        /// <param name="id"></param>
         public static void DeleteGoal(long id)
         {
             try
@@ -73,6 +97,12 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Обработка сообщения о цели и проверка на соответствие правилу ввода.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static Goal GoalParsing(string message, long id)
         {
             try
@@ -104,6 +134,11 @@ namespace BotLibrary
             
         }
 
+        /// <summary>
+        /// Проверка на наличие цели у пользователя в виде файла.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static bool HasGoal(long id)
         {
             return File.Exists($"../../../data/goals/{id}.json");

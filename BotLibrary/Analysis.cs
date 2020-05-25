@@ -1,22 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Drawing;
 
 
 namespace BotLibrary
 {
+    /// <summary>
+    /// Класс для реализации анализа списка покупок и перевода его в круговую диаграмму
+    /// Или график сумм покупок по дням.
+    /// </summary>
     public class Analysis
     {
+        // Пути для сохранения данных в папке работы.
         public static string graphicPath = "../../../data/graphics/";
         public static string piePath = "../../../data/pies/";
 
+        // Генератор рандомных чисел.
         public static Random random = new Random();
 
+        /// <summary>
+        /// Метод для создания графика на основе значений покупок и дат.
+        /// </summary>
+        /// <param name="purchases"></param>
+        /// <param name="dates"></param>
+        /// <param name="id"></param>
         public static void GraphicAnalysis(List<double> purchases, List<DateTime> dates, long id)
         {
             double maxPrice = purchases.Max();
@@ -89,6 +97,13 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для реализации создания круговой диаграммы с помощью класса
+        /// Graphics и Bitmap.
+        /// </summary>
+        /// <param name="categoriesCount"></param>
+        /// <param name="categoriesGroup"></param>
+        /// <param name="id"></param>
         public static void PieAnalysis(List<int> categoriesCount, List<string> categoriesGroup, long id)
         {
             // Размеры изображения с Pie.
@@ -110,9 +125,12 @@ namespace BotLibrary
             float angle = 360 / (float)allCount;
             float percent = 100 / (float)allCount;
 
+            // Списки углов и процентов, которые будут отображаться
+            // в диаграмме.
             List<float> angles = new List<float>();
             List<float> percents = new List<float>();
 
+            // Заполнение списка для вывода.
             for (int i = 0; i < categoriesGroup.Count; i++)
             {
                 angles.Add(categoriesCount[i] * angle);
@@ -148,15 +166,18 @@ namespace BotLibrary
                     graphics.DrawPie(new Pen(Color.Black, 4), new RectangleF(new Point(pieX, pieY),
                     new Size(250, 250)), previousAngle, angles[i]);
 
+                    // Генерация рандомного цвета для заполнения куска диаграммы.
                     int r = random.Next(255);
                     int g = random.Next(255);
                     int b = random.Next(255);
                     Color color = Color.FromArgb(r, g, b);
 
+                    // Заполнение куска диаграммы.
                     graphics.FillPie(
                         new SolidBrush(color),
                         new Rectangle(new Point(pieX, pieY), new Size(250, 250)), previousAngle, angles[i]);
 
+                    // Вывод ТОП12 категорий.
                     if (i <= 12)
                     {
                         graphics.DrawEllipse(new Pen(Color.Black, 2),

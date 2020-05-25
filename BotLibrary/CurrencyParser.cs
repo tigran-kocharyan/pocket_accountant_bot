@@ -3,18 +3,27 @@ using Newtonsoft.Json;
 
 namespace BotLibrary
 {
+    /// <summary>
+    /// Класс для отправки GET-запроса сервису https://www.exchangerate-api.com/
+    /// для получения значения курса USD или RUB. Использует объекты класса API_Obj
+    /// обработки запроса.
+    /// </summary>
     public class CurrencyParser
     {
-        public static API_Obj GetRates(string currencyFrom)
+        public static RatesResults GetRates(string currencyFrom)
         {
             Console.WriteLine($"[Currency Parser] Starts for [{currencyFrom}]");
             try
             {
+                // Отправка GET-запроса сервису exchangerate-api.com.
                 String URLString = $"https://prime.exchangerate-api.com/v5/e6a343629ee26399ab0aac06/latest/{currencyFrom}";
                 using (var webClient = new System.Net.WebClient())
                 {
+                    // С помощью System.Net скачиваем все, что возвращает нам сервис
+                    // и переводим в объект класса API_Obj.
                     var json = webClient.DownloadString(URLString);
-                    API_Obj rates = JsonConvert.DeserializeObject(json, typeof(API_Obj)) as API_Obj;
+                    RatesResults rates = JsonConvert.DeserializeObject(json, typeof(RatesResults)) 
+                        as RatesResults;
                     return rates;
                 }
             }
@@ -26,17 +35,23 @@ namespace BotLibrary
         }
     }
 
-    public class API_Obj
+    /// <summary>
+    /// Класс для хранения информации о полученном запроса.
+    /// </summary>
+    public class RatesResults
     {
-        public string result { get; set; }
-        public string documentation { get; set; }
-        public string terms_of_use { get; set; }
-        public string time_zone { get; set; }
-        public string time_last_update { get; set; }
-        public string time_next_update { get; set; }
+        public string Result { get; set; }
+        public string Documentation { get; set; }
+        public string TermsOfUse { get; set; }
+        public string TimeZone { get; set; }
+        public string TimeLastUpdate { get; set; }
+        public string TimeNextUpdate { get; set; }
         public ConversionRate conversion_rates { get; set; }
     }
 
+    /// <summary>
+    /// Класс для хранения курса базовой валюты к остальным валютам.
+    /// </summary>
     public class ConversionRate
     {
         public double AED { get; set; }
@@ -91,5 +106,4 @@ namespace BotLibrary
         public double UYU { get; set; }
         public double ZAR { get; set; }
     }
-
 }

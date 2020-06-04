@@ -23,7 +23,7 @@ namespace TelegramBot
             {
                 // Создание объекта класса TelegramBotClient, который представляет нашего бота.
                 // В параметрах создания бота использует его уникальный ТОКЕН.
-                botClient = new TelegramBotClient("788209639:AAEcBsecEd_CCzu2uOrYo80WdzSyN7lSsC0")
+                botClient = new TelegramBotClient("PUT-YOUR-TOKEN-IN-HERE")
                 { Timeout = TimeSpan.FromSeconds(10) };
 
                 // Выводим в консоль время начала работы бота.

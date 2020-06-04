@@ -29,7 +29,8 @@ namespace BotLibrary
             {
                 await botClient.SendTextMessageAsync(e.Message.Chat,
                 text: greetingMessage,
-                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                replyMarkup: menuMarkup);
             }
             catch (Exception ex)
             {
@@ -73,7 +74,7 @@ namespace BotLibrary
                         replyMarkup: force);
             }
             // проверить текст на то, что там только сумма денег.
-            // считать текущую гоал
+            // считать текущую гоал 
             // отнять от нее сумму и проверить на CheckGoal
             // вывести сообщение из CheckGoal и обновить маркап.
         }

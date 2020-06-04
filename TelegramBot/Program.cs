@@ -19,8 +19,6 @@ namespace TelegramBot
 
         public static void Main(string[] args)
         {
-            //Analysis.Main(null);
-            //return;
             try
             {
                 // Создание объекта класса TelegramBotClient, который представляет нашего бота.
@@ -65,8 +63,6 @@ namespace TelegramBot
             // Вызываем необходимые методы.
             try
             {
-                CommandHandler.DoStart(e, botClient);
-                return;
                 switch (text)
                 {
                     case null:
@@ -122,7 +118,6 @@ namespace TelegramBot
         /// <param name="e"></param>
         private static async void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            return;
             var data = e.CallbackQuery.Data;
             var chatID = e.CallbackQuery.Message.Chat.Id;
 

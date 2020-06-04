@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Threading;
-using System.Linq;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using BotLibrary;
 using static BotLibrary.Phrases;
 using static BotLibrary.Markups;
-using static BotLibrary.Analysis;
-//using System.Net;
-//using System.Threading.Tasks;
-//using MihaZupan;
+using System.IO;
 
 namespace TelegramBot
 {
@@ -24,19 +17,22 @@ namespace TelegramBot
         /// </summary>
         private static ITelegramBotClient botClient;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             //Analysis.Main(null);
             //return;
             try
             {
-                //var proxy = new HttpToSocks5Proxy("p.webshare.io", 1080, "kgeylycq-1", "cnhaxv69p8lf");
-                //proxy.ResolveHostnamesLocally = false;
-                botClient = new TelegramBotClient("788209639:AAEcBsecEd_CCzu2uOrYo80WdzSyN7lSsC0")
+                // Создание объекта класса TelegramBotClient, который представляет нашего бота.
+                // В параметрах создания бота использует его уникальный ТОКЕН.
+                botClient = new TelegramBotClient("PUT-YOUR-TOKEN-IN-HERE")
                 { Timeout = TimeSpan.FromSeconds(10) };
 
+                // Выводим в консоль время начала работы бота.
                 Console.WriteLine($"[{DateTime.Now}]: Bot is running...");
 
+                // Подписываем методы-обработчики на событие получения сообщения
+                // и на событие получение Callback Query.
                 botClient.OnMessage += Bot_OnMessage;
                 botClient.OnCallbackQuery += Bot_OnCallbackQuery;
 
@@ -49,13 +45,24 @@ namespace TelegramBot
             }
         }
 
-        private static void Bot_OnMessage(object sender, MessageEventArgs e) // Не забыть про async.
+        /// <summary>
+        /// Метод, который обрабатывает текст сообщения и в завимисоти от него вызывает методы.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            User.WriteJSON(new User(e.Message.Chat.Username, e.Message.Chat.Id));
+            // Записываем информацию с натсройками нового пользователя, если такого
+            // еще не существует.
+            if (!File.Exists(@"../../../data/preferences/"+e.Message.Chat.Id+".json"))
+            {
+                User.WriteJSON(new User(e.Message.Chat.Username, e.Message.Chat.Id));
+            }
 
             var text = e?.Message?.Text;
             Console.WriteLine($"[User] @{e.Message.Chat.Username} with [ID] {e.Message.Chat.Id} is texting...");
 
+            // Вызываем необходимые методы.
             try
             {
                 CommandHandler.DoStart(e, botClient);
@@ -108,11 +115,18 @@ namespace TelegramBot
             }
         }
 
+        /// <summary>
+        /// Метод, который обрабатывает запросы обратного вызова и в завимисоти от него вызывает методы.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static async void Bot_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             return;
             var data = e.CallbackQuery.Data;
             var chatID = e.CallbackQuery.Message.Chat.Id;
+
+            // Вызываем необходимые методы.
             try
             {
                 switch (data)
@@ -172,7 +186,7 @@ namespace TelegramBot
                         break;
 
                     case "output":
-                        CallbackHandler.OutputShow(e, botClient);
+                        CallbackHandler.OutputTodayShow(e, botClient);
                         break;
 
                     case "commands":

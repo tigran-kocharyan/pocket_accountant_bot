@@ -10,8 +10,15 @@ using static BotLibrary.Markups;
 
 namespace BotLibrary
 {
+    /// <summary>
+    /// Если пользователь отправил сообщение, то обработчик, в зависимости от текста,
+    /// с помощью методов из данного класса ответит пользователю.
+    /// </summary>
     public class CallbackHandler
     {
+        /// <summary>
+        /// Метод для отправки сообщения о помощи с вводом.
+        /// </summary>
         public async static void HelpInput(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -33,6 +40,9 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией полезности бота.
+        /// </summary>
         public async static void HelpWhy(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -54,6 +64,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией, зачем же нужен бот.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void HelpFor(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -76,6 +91,11 @@ namespace BotLibrary
 
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения о том, как работает бот.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void HelpHow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -97,6 +117,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        ///  Метод для отправки сообщения с кнопками главного меню.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void MenuShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -118,6 +143,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией о настройках и выбором языки по-умолчанию.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void SettingShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -140,6 +170,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с выбором кнопок подсказок.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void HelpShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -161,6 +196,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с выбором фильтрации.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void FilterShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -182,6 +222,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с запросом о вводе информации.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void InputShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -202,6 +247,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией о покупках.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void OutputShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -243,6 +293,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией о покупках за сегодняшний день.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void OutputTodayShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -268,10 +323,11 @@ namespace BotLibrary
                             chatId: chatID,
                             text: $"*Ваши покупки вида за сегодня 📝:*\n" +
                             $"_Название Цена Валюта Категория Дата_\n\n"
-                            + stringBuilder.ToString(),
+                            + stringBuilder.ToString() + "\n*Так же Вы можете получить анализ, " +
+                            "нажав на соответствующую кнопку ниже 📊*",
                             parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                             messageId: e.CallbackQuery.Message.MessageId,
-                            replyMarkup: filterMarkup);
+                            replyMarkup: filterTodayMarkup);
                     }
                     else
                     {
@@ -299,6 +355,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией о покупках за текущий месяц.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void OutputMonthShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -324,10 +385,11 @@ namespace BotLibrary
                             chatId: chatID,
                             text: $"*Ваши покупки за месяц вида 📑:*\n" +
                             $"_Название Цена Валюта Категория Дата_\n\n"
-                            + stringBuilder.ToString(),
+                            + stringBuilder.ToString() + "\n*Так же Вы можете получить анализ, " +
+                            "нажав на соответствующую кнопку ниже 📊*",
                             parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                             messageId: e.CallbackQuery.Message.MessageId,
-                            replyMarkup: filterMarkup);
+                            replyMarkup: filterMonthMarkup);
                     }
                     else
                     {
@@ -355,6 +417,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        ///  Метод для отправки сообщения с целью.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void GoalShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -392,6 +459,11 @@ namespace BotLibrary
             }
         }
 
+        /// <summary>
+        /// Метод для отправки сообщения с информацией о командах.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="botClient"></param>
         public async static void CommandsShow(CallbackQueryEventArgs e, ITelegramBotClient botClient)
         {
             try
@@ -435,8 +507,8 @@ namespace BotLibrary
 
                 bool hasUSD = false;
                 bool hasRUB = false;
-                API_Obj USD = null;
-                API_Obj RUB = null;
+                RatesResults USD = null;
+                RatesResults RUB = null;
 
                 foreach (var purchase in purchasesList)
                 {
